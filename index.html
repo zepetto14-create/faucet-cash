@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Faucet Cash Test</title>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <style>
+    body { font-family: Arial, sans-serif; text-align:center; padding:50px; background:#f9f9f9; }
+    input, button { padding:10px; margin:10px; font-size:16px; }
+    #status { margin-top:20px; font-weight:bold; }
+    .container { background:white; display:inline-block; padding:30px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Faucet Cash Test</h1>
+    <p>Wprowadź swój adres testnet:</p>
+    <input type="text" id="wallet" placeholder="Adres testnet">
+    <div class="g-recaptcha" data-sitekey="6LfKqPUrAAAAABOJjfCkeLhBhEhqzV5i6C4iQMDP"></div>
+    <button onclick="claim()">Odbierz nagrodę</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    function claim() {
+      const wallet = document.getElementById('wallet').value.trim();
+      const token = grecaptcha.getResponse();
+
+      if (!wallet) {
+        alert("Podaj adres testnet!");
+        return;
+      }
+      if (!token) {
+        alert("Zaznacz captcha, aby potwierdzić, że nie jesteś robotem!");
+        return;
+      }
+
+      // demo: tutaj normalnie wysyłasz token do backendu, który sprawdza reCAPTCHA i wypłaca tokeny
+      document.getElementById('status').innerText = "Captcha OK! Nagroda przyznana (demo)";
+      
+      // reset captcha po kliknięciu
+      grecaptcha.reset();
+    }
+  </script>
+</body>
+</html>
