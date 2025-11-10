@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faucet-Cash</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; padding: 0; }
+  header { background: #4CAF50; color: white; padding: 1rem; text-align: center; }
+  main { padding: 2rem; max-width: 800px; margin: auto; }
+  .task { background: white; padding: 1rem; margin-bottom: 1rem; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+  button { padding: 0.5rem 1rem; margin-top: 0.5rem; cursor: pointer; background: #4CAF50; color: white; border: none; border-radius: 3px; }
+  button:hover { background: #45a049; }
+  .login, .tasks { margin-bottom: 2rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Faucet-Cash</h1>
+</header>
+<main>
+  <section class="login">
+    <h2>Login admina</h2>
+    <input type="text" id="username" placeholder="Username"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button onclick="login()">Zaloguj</button>
+    <p id="loginMsg"></p>
+  </section>
+
+  <section class="tasks">
+    <h2>Zadania</h2>
+    <div id="tasksList"></div>
+  </section>
+</main>
+<script>
+let token = '';
+
+async function login() {
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+
+  const res = await fetch('http://localhost:4000/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  });
+
+  const data = await res.json();
+  if (data.token) {
+    token = data.token;
+    document.getElementById('loginMsg').textContent = 'Zalogowano!';
+    loadTasks();
+  } else {
+    document.getElementById('loginMsg').textContent = 'Błąd logowania';
+  }
+}
+
+async function loadTasks() {
+  const res = await fetch('http://localhost:4000/tasks', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  });
+  const tasks = await res.json();
+
+  const tasksList = document.getElementById('tasksList');
+  tasksList.innerHTML = '';
+  tasks.forEach(task => {
+    const div = document.createElement('div');
+    div.className = 'task';
+    div.innerHTML = `<h3>${task.title}</h3><p>${task.description}</p><p>Reward: ${task.reward} punktów</p>`;
+    tasksList.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>
